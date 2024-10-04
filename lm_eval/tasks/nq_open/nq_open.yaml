@@ -1,10 +1,24 @@
+group:
+  - rag
 task: nq_open
 dataset_path: nq_open
 output_type: generate_until
+dataset_kwargs:
+  data_dir: ../data/nq_open
 training_split: train
 validation_split: validation
-description: "Answer these questions:\n\n"
+# description: "Answer these questions:\n\n"
 doc_to_text: "Q: {{question}}?\nA:"
+# doc_to_text: |
+#   Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+
+  ### Instruction:
+  #  Answer the following question
+            
+  ### Input:
+  #   Question: {{question}}?
+            
+  ### Response:
 doc_to_target: "{{answer}}" # TODO: should be multi-target
 fewshot_delimiter: "\n"
 generation_kwargs:
@@ -28,5 +42,12 @@ metric_list:
     ignore_punctuation: true
     regexes_to_ignore:
     - "\\b(?:The |the |An |A |The |a |an )"
+  - metric: !function utils.f1
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+    regexes_to_ignore:
+    - "\ban|a|the\b"
 metadata:
   version: 3.0

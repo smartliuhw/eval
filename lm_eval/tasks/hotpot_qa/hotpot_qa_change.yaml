@@ -1,0 +1,44 @@
+group:
+  - rag_test
+task: hotpot_qa_with_knowledges
+dataset_path: hotpot_qa
+dataset_name: fullwiki
+dataset_kwargs:
+  data_dir: ../data/hotpot_qa_test_with_kg_knowledges
+output_type: generate_until
+training_split: train
+validation_split: validation
+fewshot_split: train
+test_split: null
+# num_fewshot: 0
+doc_to_text: "{{'There are several facts:\n' + facts + '\nPlease answer the following questions according to these facts.\nQ:\n' + question + '\nA:\n'}}"
+# doc_to_text: "{{'Please answer the following question.\nQ:\n' + question + '\nA:\n'}}"
+doc_to_target: "{{answer}}"
+process_docs: !function utils.process_docs_gen
+should_decontaminate: True
+doc_to_decontamination_query: question
+generation_kwargs:
+  max_new_tokens: 128
+  until:
+    - "\n"
+    - "."
+    - ","
+  do_sample: false
+  temperature: 0.0
+filter_list:
+  - name: remove_whitespace
+    filter:
+      - function: remove_whitespace
+      - function: take_first
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+  - metric: !function utils.f1
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+

@@ -1,8 +1,11 @@
 group:
   - truthfulqa
+  - rag
 task: truthfulqa_gen
 dataset_path: truthful_qa
 dataset_name: generation
+dataset_kwargs:
+  data_dir: ../data/truthful_qa_gen
 output_type: generate_until
 training_split: null
 validation_split: validation
@@ -25,7 +28,7 @@ doc_to_text: "\
   '%}\
   {{prompt_qa + '\n\nQ: ' + question}}"
 doc_to_target: " "
-process_docs: !function utils.process_docs_gen
+process_docs: !function utils.process_docs_gen_raw
 process_results: !function utils.process_results_gen
 should_decontaminate: True
 doc_to_decontamination_query: question

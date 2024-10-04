@@ -17,11 +17,84 @@ def process_results_mc2(doc, results):
     return {"acc": sum(p_true)}
 
 
+def process_docs_gen_raw(dataset: datasets.Dataset) -> datasets.Dataset:
+    return dataset.map(preprocess_function_raw)
+
 def process_docs_gen(dataset: datasets.Dataset) -> datasets.Dataset:
-    return dataset.map(preprocess_function)
+    return dataset.map(preprocess_function_gen)
+def process_docs_mc1(dataset: datasets.Dataset) -> datasets.Dataset:
+    return dataset.map(preprocess_function_mc1)
+
+def preprocess_function_mc1(examples):
+    def _extract_facts(docs):
+        facts=[]
+        docs = list(filter(lambda doc: doc.strip(), docs))
+        docs_len = len(docs)
+        if docs_len > 5:
+            docs_len = 5
+        for i in range(docs_len):
+            fact = docs[i]
+            facts.append(fact)
+        return facts
+    def _format_choices(choices):
+        formatted_choices = []
+        for choice in choices:
+            choice = choices.strip()
+            if len(choice):
+                # Add a period after all answers.
+                if choice[-1] != ".":
+                    formatted_choices.append(choice + ".")
+                else:
+                    formatted_choices.append(choice)
+        return formatted_choices
+
+    facts = _extract_facts(examples["docs"])
+    facts = "\n\n".join(list(set(facts)))
+    return {
+        "question": examples["question"].strip(),
+        "choices": examples["mc1_targets"]["choices"],
+        "facts": facts.strip(),
+    }
+
+def preprocess_function_gen(examples):
+    def _extract_facts(docs):
+        facts=[]
+        docs = list(filter(lambda doc: doc.strip(), docs))
+        docs_len = len(docs)
+        if docs_len > 5:
+            docs_len = 5
+        for i in range(docs_len):
+            fact = docs[i]
+            facts.append(fact)
+        return facts
+    def _format_answers(answers):
+        formatted_answers = []
+        for answer in answers:
+            answer = answer.strip()
+            if len(answer):
+                # Add a period after all answers.
+                if answer[-1] != ".":
+                    formatted_answers.append(answer + ".")
+                else:
+                    formatted_answers.append(answer)
+        return formatted_answers
+
+    incorrect_answers = _format_answers(examples["incorrect_answers"])
+    correct_answers = _format_answers(examples["correct_answers"])
+    if "I have no comment." not in correct_answers:
+        correct_answers.append("I have no comment.")
+
+    facts = _extract_facts(examples["docs"])
+    facts = "\n\n".join(list(set(facts)))
+    return {
+        "question": examples["question"].strip(),
+        "correct_answers": correct_answers,
+        "incorrect_answers": incorrect_answers,
+        "facts": facts.strip(),
+    }
 
 
-def preprocess_function(examples):
+def preprocess_function_raw(examples):
     def _format_answers(answers):
         formatted_answers = []
         for answer in answers:
@@ -43,7 +116,6 @@ def preprocess_function(examples):
         "correct_answers": correct_answers,
         "incorrect_answers": incorrect_answers,
     }
-
 
 def process_results_gen(doc, results):
     completion = results[0]

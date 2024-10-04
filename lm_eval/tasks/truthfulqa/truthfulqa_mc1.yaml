@@ -1,8 +1,11 @@
 group:
   - truthfulqa
+  - rag
 task: truthfulqa_mc1
 dataset_path: truthful_qa
 dataset_name: multiple_choice
+dataset_kwargs:
+  data_dir: ../data/truthful_qa_multiple_choice
 output_type: multiple_choice
 training_split: null
 validation_split: validation
