@@ -51,7 +51,7 @@ def preprocess_function(examples):
             facts.append(title + ":\n" + text)
             '''
             fact = docs[i]
-            facts.append(fact)
+            facts.append(f"{i + 1}. {fact}")
         return facts
 
     facts = _extract_facts(examples["docs"])
