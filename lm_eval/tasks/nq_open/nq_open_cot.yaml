@@ -1,0 +1,45 @@
+group:
+  - rag_cot
+task: nq_open_cot
+dataset_path: nq_open
+output_type: generate_until
+dataset_kwargs:
+  data_dir: ../data/nq_open_with_snippets
+training_split: train
+validation_split: validation
+description: "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are given the following question and snippets. You should select the snippets that are relevant to the question first, and answer the question according to these snippets.\nYour output should be to first output the serial number of the selected snippet in the form of a list, and then splice the correct answer at the end.\n\n### Input:\n"
+doc_to_text: "question: {{question}}\n\nsnippets:\n{{facts}}\n\n### Response:\n"
+doc_to_target: "{{answer}}" # TODO: should be multi-target
+process_docs: !function utils.process_docs_gen
+process_results: !function utils.process_results
+fewshot_delimiter: "\n"
+generation_kwargs:
+  until:
+    - "\n"
+    - "."
+    - ","
+  do_sample: false
+  temperature: 0.0
+filter_list:
+  - name: remove_whitespace
+    filter:
+      - function: remove_whitespace
+      - function: take_first
+target_delimiter: " "
+metric_list:
+  - metric: exact_match
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+    regexes_to_ignore:
+    - "\\b(?:The |the |An |A |The |a |an )"
+  - metric: !function utils.f1
+    aggregation: mean
+    higher_is_better: true
+    ignore_case: true
+    ignore_punctuation: true
+    regexes_to_ignore:
+    - "\ban|a|the\b"
+metadata:
+  version: 3.0
