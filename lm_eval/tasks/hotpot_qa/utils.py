@@ -51,7 +51,9 @@ def preprocess_function(examples):
         for i in range(context_len):
             title = context["title"][i]
             # text = "\n".join(context["sentences"][i])
-            sentences.extend(f"{i + 1}. {context["sentences"][i]}")
+            sentence = context["sentences"][i]
+            sentences.extend(f"{i + 1}. {sentence}")
+            # sentences.extend(f"{i + 1}. {context["sentences"][i]}")
             # facts.append(title + ":\n" + text)
         return "\n\n".join(random.sample(sentences, min(5, len(sentences))))
         
