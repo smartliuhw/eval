@@ -9,6 +9,7 @@ import collections
 from rouge_score import rouge_scorer, scoring
 
 f1_gen = evaluate.load("./metrics/f1")
+exact_match = evaluate.load("./metrics/exact_match")
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
@@ -61,6 +62,22 @@ def preprocess_function(examples):
         "answer": examples["answer"],
         "facts": facts.strip(),
     }
+    
+def process_results(doc, results):
+    completion = results[0]
+    ans = doc["answer"]
+    exact_score = exact_match(references=[ans], predictions=[completion])
+    ans_toks = get_tokens(ans)
+    completion_toks = get_tokens(completion)
+    common = collections.Counter(ans_toks) & collections.Counter(completion_toks)
+    num_same = sum(common.values())
+    if len(ans_toks) == 0 or len(completion_toks) == 0:
+        f1_score = 0
+    else:
+        precision = 1.0 * num_same / len(completion_toks)
+        recall = 1.0 * num_same / len(ans_toks)
+        f1_score = (2 * precision * recall) / (precision + recall)
+    return {"exact_match": exact_score, "f1": f1_score}
 
 def f1(**kwargs):
     references = kwargs["references"]

@@ -1,6 +1,7 @@
 group:
   - truthfulqa
   - rag_search_test
+  - rag_cot
 task: truthfulqa_mc1_with_search_results
 dataset_path: truthful_qa
 dataset_name: multiple_choice

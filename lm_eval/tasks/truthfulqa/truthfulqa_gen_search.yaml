@@ -1,6 +1,7 @@
 group:
   - truthfulqa
   - rag_search_test
+  - rag_cot
 task: truthfulqa_gen_with_search_results
 dataset_path: truthful_qa
 dataset_name: generation
