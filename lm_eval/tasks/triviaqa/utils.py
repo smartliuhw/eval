@@ -10,6 +10,7 @@ from rouge_score import rouge_scorer, scoring
 
 f1_gen = evaluate.load("./metrics/f1")
 exact_match = evaluate.load("./metrics/exact_match")
+sep_tokens = ["<unused2>", "<0x02>", "<|reserved_special_token_2|>"]
 
 def normalize_answer(s):
     """Lower text and remove punctuation, articles and extra whitespace."""
@@ -61,8 +62,11 @@ def preprocess_function(examples):
     
 def process_results(doc, results):
     completion = results[0]
+    for sep_token in sep_tokens:
+        if sep_token in completion:
+            completion = completion.split(sep_token)[1]
     ans = doc["answer"]
-    exact_score = exact_match(references=[ans], predictions=[completion])
+    exact_score = exact_match.compute(references=[ans], predictions=[completion])["exact_match"]
     ans_toks = get_tokens(ans)
     completion_toks = get_tokens(completion)
     common = collections.Counter(ans_toks) & collections.Counter(completion_toks)
