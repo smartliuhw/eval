@@ -71,8 +71,10 @@ def process_results(doc, results):
     completion_toks = get_tokens(completion)
     common = collections.Counter(ans_toks) & collections.Counter(completion_toks)
     num_same = sum(common.values())
-    if len(ans_toks) == 0 or len(completion_toks) == 0:
+    if num_same == 0:
         f1_score = 0
+    elif len(ans_toks) == 0 or len(completion_toks) == 0:
+        f1_score = int(ans_toks == completion_toks)
     else:
         precision = 1.0 * num_same / len(completion_toks)
         recall = 1.0 * num_same / len(ans_toks)
