@@ -5,7 +5,7 @@ export NCCL_DEBUG=INFO
 
 # model_path=/home/shared_space/smart/models/Mistral-7B
 # model_path=/home/shared_space/smart/models/Gemma-2B
-# model_path=/home/shared_space/smart/models/Llama2-7B
+model_path=/home/shared_space/smart/models/Llama2-7B
 
 model_path=$1
 echo $model_path

@@ -5,8 +5,8 @@
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 # export CUDA_VISIBLE_DEVICES=1
 
-# model_path=/home/shared_space/smart/models/Llama2-7B
-model_path=/home/shared_space/smart/models/Gemma-7B
+model_path=/home/shared_space/smart/models/Llama2-7B
+# model_path=/home/shared_space/smart/models/Gemma-7B
 # model_path=/home/shared_space/smart/models/Llama3-8B
 echo $model_path
 
