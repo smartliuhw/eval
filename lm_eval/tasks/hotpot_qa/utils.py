@@ -79,7 +79,7 @@ def process_results(doc, results):
         if sep_token in completion:
             completion = completion.split(sep_token)[1]
     ans = doc["answer"]
-    exact_score = exact_match.compute(references=[ans], predictions=[completion])["exact_match"]
+    exact_score = exact_match.compute(references=[ans], predictions=[completion], ignore_punctuation=True)["exact_match"]
     ans_toks = get_tokens(ans)
     completion_toks = get_tokens(completion)
     common = collections.Counter(ans_toks) & collections.Counter(completion_toks)

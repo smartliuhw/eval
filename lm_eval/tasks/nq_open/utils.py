@@ -69,21 +69,26 @@ def process_results(doc, results):
     for sep_token in sep_tokens:
         if sep_token in completion:
             completion = completion.split(sep_token)[1]
-    ans = doc["answer"]
-    exact_score = exact_match.compute(references=[ans], predictions=[completion])["exact_match"]
-    ans_toks = get_tokens(ans)
-    completion_toks = get_tokens(completion)
-    common = collections.Counter(ans_toks) & collections.Counter(completion_toks)
-    num_same = sum(common.values())
-    if num_same == 0:
-        f1_score = 0
-    elif len(ans_toks) == 0 or len(completion_toks) == 0:
-        f1_score = int(ans_toks == completion_toks)
-    else:
-        precision = 1.0 * num_same / len(completion_toks)
-        recall = 1.0 * num_same / len(ans_toks)
-        f1_score = (2 * precision * recall) / (precision + recall)
-    return {"exact_match": exact_score, "f1": f1_score}
+    answers = doc["answer"]
+    best_em_score = 0
+    best_f1_score = 0
+    for ans in answers:
+        exact_score = exact_match.compute(references=[ans], predictions=[completion], ignore_punctuation=True)["exact_match"]
+        ans_toks = get_tokens(ans)
+        completion_toks = get_tokens(completion)
+        common = collections.Counter(ans_toks) & collections.Counter(completion_toks)
+        num_same = sum(common.values())
+        if num_same == 0:
+            f1_score = 0
+        elif len(ans_toks) == 0 or len(completion_toks) == 0:
+            f1_score = int(ans_toks == completion_toks)
+        else:
+            precision = 1.0 * num_same / len(completion_toks)
+            recall = 1.0 * num_same / len(ans_toks)
+            f1_score = (2 * precision * recall) / (precision + recall)
+        best_em_score = max(best_em_score, exact_score)
+        best_f1_score = max(best_f1_score, f1_score)
+    return {"exact_match": best_em_score, "f1": best_f1_score}
 
 def f1(**kwargs):
     references = kwargs["references"]
