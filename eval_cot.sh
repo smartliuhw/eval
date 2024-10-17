@@ -16,5 +16,5 @@ accelerate launch -m lm_eval \
         --tasks rag_cot \
         --batch_size 8 \
         --num_fewshot 1 \
-        --output_path "./rag_res/" \
+        --output_path "./cot_res/" \
         --log_samples

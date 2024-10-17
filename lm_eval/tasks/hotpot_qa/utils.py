@@ -92,7 +92,7 @@ def process_results(doc, results):
         precision = 1.0 * num_same / len(completion_toks)
         recall = 1.0 * num_same / len(ans_toks)
         f1_score = (2 * precision * recall) / (precision + recall)
-    return {"exact_match": exact_score, "f1": f1_score}
+    return {"exact_match_score": exact_score, "f1_score": f1_score}
     
 
 def f1(**kwargs):

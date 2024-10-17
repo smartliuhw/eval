@@ -28,15 +28,21 @@ filter_list:
       - function: take_first
 target_delimiter: " "
 metric_list:
-  - metric: exact_match
+  # - metric: exact_match
+  #   aggregation: mean
+  #   higher_is_better: true
+  #   ignore_case: true
+  #   ignore_punctuation: true
+  # - metric: !function utils.f1
+  #   aggregation: mean
+  #   higher_is_better: true
+  #   ignore_case: true
+  #   ignore_punctuation: true
+  - metric: exact_match_score
     aggregation: mean
     higher_is_better: true
-    ignore_case: true
-    ignore_punctuation: true
-  - metric: !function utils.f1
+  - metric: f1_score
     aggregation: mean
     higher_is_better: true
-    ignore_case: true
-    ignore_punctuation: true
 metadata:
   version: 3.0

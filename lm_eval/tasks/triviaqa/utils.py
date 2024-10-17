@@ -84,7 +84,7 @@ def process_results(doc, results):
             f1_score = (2 * precision * recall) / (precision + recall)
         best_em_score = max(best_em_score, exact_score)
         best_f1_score = max(best_f1_score, f1_score)
-    return {"exact_match": exact_score, "f1": f1_score}
+    return {"exact_match_score": exact_score, "f1_score": f1_score}
 
 def f1(**kwargs):
     references = kwargs["references"]
