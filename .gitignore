@@ -24,3 +24,4 @@ examples/wandb
 rag_res/
 rag_search_res/
 test_res/
+cot_res/
